@@ -66,7 +66,7 @@ namespace IMDB
             com.ExecuteNonQuery();
         }
 
-        public void addActor(string actor, string age)
+        public string addActor(string actor, string age)
         {
             // search DB to see if actor exists
             // update DB accordingly
@@ -88,10 +88,12 @@ namespace IMDB
                 // Add entry into imdb 
                 com.CommandText = "INSERT INTO Actors (actor,age) Values ('" + actor + "', '" + age + "')";
                 com.ExecuteNonQuery();
+                return "success";
             }
+            return "actor already in imdb";
         }
 
-        public void addMovie(string movie, string year)
+        public string addMovie(string movie, string year)
         {
             // search DB to see if movie exists
             // update DB accordingly
@@ -113,17 +115,25 @@ namespace IMDB
                 // Add entry into imdb
                 com.CommandText = "INSERT INTO Movies (movie,year) Values ('" + movie + "', '" + year + "')";
                 com.ExecuteNonQuery();
+                return "success";
             }
+
+            return "movie already in imdb";
         }
 
-        public void deleteActor(string actor)
+        public string deleteActor(string actor)
         {
             //delete Actor if they exist
             actor = actor.Trim();
             com.CommandText = "Delete FROM Actors WHERE actor = '" + actor + "'";
-            com.ExecuteNonQuery();
+            int numberOfRecords = com.ExecuteNonQuery();
             com.CommandText = "Delete FROM MovieAttributes WHERE actor = '" + actor + "'";
-            com.ExecuteNonQuery();
+            numberOfRecords += com.ExecuteNonQuery();
+
+            if (numberOfRecords > 0)
+                return "success";
+
+            return "actor not found in imdb";
         }
 
         public void findMovies(string actor, ref List<string> movie_list)
@@ -162,14 +172,19 @@ namespace IMDB
             actor_list = actors;
         }
 
-        public void deleteMovie(string movie)
+        public string deleteMovie(string movie)
         {
             // delete movie if it exists.
             movie = movie.Trim();
             com.CommandText = "Delete FROM Movies WHERE movie = '" + movie + "'";
-            com.ExecuteNonQuery();
+            int numberOfRecords = com.ExecuteNonQuery();
             com.CommandText = "Delete FROM MovieAttributes WHERE movie = '" + movie + "'";
-            com.ExecuteNonQuery();
+            numberOfRecords += com.ExecuteNonQuery();
+
+            if (numberOfRecords > 0)
+                return "success";
+
+            return "actor not found in imdb";
         }
 
         public string actorMovieAssociation(string actor, string movie)
@@ -232,6 +247,116 @@ namespace IMDB
                 status = "error, movie not found";
 
             return status;
+        }
+
+        public string updateActorAge(string age, string actor)
+        {
+            age = age.Trim();
+            actor = actor.Trim();
+            com.CommandText = "Select actor FROM Actors WHERE actor = '" + actor + "'";
+
+            actors.Clear();
+            using (System.Data.SQLite.SQLiteDataReader reader = com.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    if (!String.IsNullOrEmpty(reader["actor"].ToString()))
+                    {
+                        actors.Add(reader["actor"].ToString());
+                    }
+                }
+            }
+            if (actors.Count().Equals(0)) //actor not found in imdb
+                return "actor not found in imdb";
+
+            com.CommandText = "UPDATE Actors SET age = '" + age + "' WHERE actor = '" + actor + "'";
+            com.ExecuteNonQuery();
+
+            return "success";
+        }
+
+        public string updateActorName(string actor, string updated_actor)
+        {
+            actor = actor.Trim();
+            updated_actor = updated_actor.Trim();
+            com.CommandText = "Select actor FROM Actors WHERE actor = '" + actor + "'";
+
+            actors.Clear();
+            using (System.Data.SQLite.SQLiteDataReader reader = com.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    if (!String.IsNullOrEmpty(reader["actor"].ToString()))
+                    {
+                        actors.Add(reader["actor"].ToString());
+                    }
+                }
+            }
+
+            if (actors.Count().Equals(0)) //actor not found in imdb
+                return "actor not found in imdb";
+            com.CommandText = "UPDATE Actors SET actor = '" + updated_actor + "' WHERE actor = '" + actor + "'";
+            com.ExecuteNonQuery();
+
+            com.CommandText = "UPDATE MovieAttributes SET actor = '" + updated_actor + "' WHERE actor = '" + actor + "'";
+            com.ExecuteNonQuery();
+
+            return "success";
+        }
+
+        public string updateMovieYear(string year, string movie)
+        {
+            year = year.Trim();
+            movie = movie.Trim();
+            com.CommandText = "Select movie FROM Movies WHERE movie = '" + movie + "'";
+
+            movies.Clear();
+            using (System.Data.SQLite.SQLiteDataReader reader = com.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    if (!String.IsNullOrEmpty(reader["movie"].ToString()))
+                    {
+                        movies.Add(reader["movie"].ToString());
+                    }
+                }
+            }
+            if (movies.Count().Equals(0)) //movie not found in imdb
+                return "movie not found in imdb";
+
+            com.CommandText = "UPDATE Movies SET year = '" + year + "' WHERE movie = '" + movie + "'";
+            com.ExecuteNonQuery();
+
+            return "success";
+        }
+
+        public string updateMovieName(string movie, string updated_movie)
+        {
+            movie = movie.Trim();
+            updated_movie = updated_movie.Trim();
+            com.CommandText = "Select movie FROM Movies WHERE movie = '" + movie + "'";
+
+            movies.Clear();
+            using (System.Data.SQLite.SQLiteDataReader reader = com.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    if (!String.IsNullOrEmpty(reader["movie"].ToString()))
+                    {
+                        movies.Add(reader["movie"].ToString());
+                    }
+                }
+            }
+            if (movies.Count().Equals(0)) //movie not found in imdb
+                return "movie not found in imdb";
+
+            com.CommandText = "UPDATE Movies SET movie = '" + updated_movie + "' WHERE movie = '" + movie + "'";
+            com.ExecuteNonQuery();
+
+            com.CommandText = "UPDATE MovieAttributes SET movie = '" + updated_movie + "' WHERE movie = '" + movie + "'";
+            com.ExecuteNonQuery();
+
+            return "success";
         }
 
         public void getEntireDB(ref List<string> movie_list, ref List<string> actor_list)

@@ -1,0 +1,7 @@
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\bin\Debug\IMDB.exe.config
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\bin\Debug\IMDB.exe
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\bin\Debug\IMDB.pdb
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\bin\Debug\System.Data.SQLite.dll
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\bin\Debug\System.Data.SQLite.xml
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\obj\Debug\IMDB.exe
+C:\Users\Keith\Documents\GitHub\imdb\IMDB\IMDB\obj\Debug\IMDB.pdb
